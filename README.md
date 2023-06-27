@@ -1,12 +1,7 @@
 Welcome to C# Design Patterns: Bridge
 =====================
 
-This is the source code for my Pluralsight course [C# Design Patterns: Bridge][L1]
+This is the source code for my(**vkhorikov**) Pluralsight course [C# Design Patterns: Bridge][L1]
 
-"Before" and "After" versions
----------------------------
-
-If you want to follow along with the course, clone the repository and roll its state back to the [commit marked as "Initial"][L2]. This is the starting point of the course.
-
-[L1]: https://enterprisecraftsmanship.com/ps-bridge
-[L2]: https://github.com/vkhorikov/BridgePattern/commits/master
+=====================
+The purpose of this project is to practice the Bridge Design-Pattern. Within this project there are many examples of inheritance, composition, Visual-Studio C# 8.0 enhancements. This also showcases my abilities to actively navigate and utilize Git/Github.
