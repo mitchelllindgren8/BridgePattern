@@ -2,106 +2,120 @@
 
 namespace BridgePattern
 {
-    public class MovieLicense
+    public abstract class MovieLicense
     {
-        private readonly Discount _discount;
-        private readonly LicenceType _licenceType;
-        private readonly SpecialOffer _specialOffer;
-
         public string Movie { get; }
         public DateTime PurchaseTime { get; }
 
-        public MovieLicense(
-            string movie,
-            DateTime purchaseTime,
-            Discount discount,
-            LicenceType licenceType,
-            SpecialOffer specialOffer = SpecialOffer.None)
+        protected MovieLicense(string movie, DateTime purchaseTime)
         {
             Movie = movie;
             PurchaseTime = purchaseTime;
-            _discount = discount;
-            _licenceType = licenceType;
-            _specialOffer = specialOffer;
         }
 
-        public decimal GetPrice()
+        public abstract decimal GetPrice();
+        public abstract DateTime? GetExpirationDate();
+    }
+
+    public class TwoDaysLicense : MovieLicense
+    {
+        public TwoDaysLicense(string movie, DateTime purchaseTime)
+            : base(movie, purchaseTime)
         {
-            int discount = GetDiscount();
-            decimal multiplier = 1 - discount / 100m;
-            return GetBasePrice() * multiplier;
         }
 
-        private int GetDiscount()
+        public override decimal GetPrice()
         {
-            return _discount switch
-            {
-                Discount.None => 0,
-                Discount.Military => 10,
-                Discount.Senior => 20,
-
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            return 4;
         }
 
-        private decimal GetBasePrice()
+        public override DateTime? GetExpirationDate()
         {
-            return _licenceType switch
-            {
-                LicenceType.TwoDays => 4,
-                LicenceType.LifeLong => 8,
-
-                _ => throw new ArgumentOutOfRangeException()
-            };
-        }
-
-        public DateTime? GetExpirationDate()
-        {
-            DateTime? expirationDate = GetBaseExpirationDate();
-            TimeSpan extension = GetSpecialOfferExtension();
-
-            return expirationDate?.Add(extension);
-        }
-
-        private TimeSpan GetSpecialOfferExtension()
-        {
-            return _specialOffer switch
-            {
-                SpecialOffer.None => TimeSpan.Zero,
-                SpecialOffer.TwoDaysExtension => TimeSpan.FromDays(2),
-
-                _ => throw new ArgumentOutOfRangeException()
-            };
-        }
-
-        private DateTime? GetBaseExpirationDate()
-        {
-            return _licenceType switch
-            {
-                LicenceType.TwoDays => PurchaseTime.AddDays(2) as DateTime?,
-                LicenceType.LifeLong => null,
-
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            return PurchaseTime.AddDays(2);
         }
     }
 
-    public enum LicenceType
+    public class MilitaryTwoDaysLicense : TwoDaysLicense
     {
-        TwoDays,
-        LifeLong
+        public MilitaryTwoDaysLicense(string movie, DateTime purchaseTime)
+            : base(movie, purchaseTime)
+        {
+        }
+
+        public override decimal GetPrice()
+        {
+            return base.GetPrice() * 0.9m;
+        }
     }
 
-    public enum Discount
+    public class SeniorTwoDaysLicense : TwoDaysLicense
     {
-        None,
-        Military,
-        Senior
+        public SeniorTwoDaysLicense(string movie, DateTime purchaseTime)
+            : base(movie, purchaseTime)
+        {
+        }
+
+        public override decimal GetPrice()
+        {
+            return base.GetPrice() * 0.8m;
+        }
     }
 
-    public enum SpecialOffer
+    public class LifeLongLicense : MovieLicense
     {
-        None,
-        TwoDaysExtension
+        public LifeLongLicense(string movie, DateTime purchaseTime)
+            : base(movie, purchaseTime)
+        {
+        }
+
+        public override decimal GetPrice()
+        {
+            return 8;
+        }
+
+        public override DateTime? GetExpirationDate()
+        {
+            return null;
+        }
+    }
+
+    public class MilitaryLifeLongLicense : LifeLongLicense
+    {
+        public MilitaryLifeLongLicense(string movie, DateTime purchaseTime)
+            : base(movie, purchaseTime)
+        {
+        }
+
+        public override decimal GetPrice()
+        {
+            return base.GetPrice() * 0.9m;
+        }
+    }
+
+    public class SeniorLifeLongLicense : LifeLongLicense
+    {
+        public SeniorLifeLongLicense(string movie, DateTime purchaseTime)
+            : base(movie, purchaseTime)
+        {
+        }
+
+        public override decimal GetPrice()
+        {
+            return base.GetPrice() * 0.8m;
+        }
+    }
+
+    public class SpecialOfferSeniorTwoDaysLicense : SeniorTwoDaysLicense
+    {
+        public SpecialOfferSeniorTwoDaysLicense(string movie, DateTime purchaseTime)
+            : base(movie, purchaseTime)
+        {
+        }
+
+        public override DateTime? GetExpirationDate()
+        {
+            DateTime? expirationDate = base.GetExpirationDate();
+            return expirationDate?.AddDays(2);
+        }
     }
 }
