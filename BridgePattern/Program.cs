@@ -23,6 +23,7 @@ namespace BridgePattern
             PrintLicenseDetails(license3);
             PrintLicenseDetails(license4);
 
+
             Console.ReadKey();
         }
 
